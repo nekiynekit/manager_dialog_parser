@@ -1,3 +1,4 @@
+from scripts.company import extract_companies
 from scripts.firewell import mark_firewells
 from scripts.greeting import mark_greetings
 from scripts.introduce import mark_introduces
@@ -11,28 +12,41 @@ import click
 @click.option('--fname', default='test_data.csv', help='Name of CSV-file for parsing')
 def mark_csv_file(fname):
     data = pd.read_csv(fname)
-    manager_phases = [text for text, role in zip(data['text'], data['role']) if role == 'manager']
+    dialog_text = data['text']
+    
+    greetings = [item & (role == 'manager') for item, role in zip(mark_greetings(dialog_text), data['role'])]
+    firewells = [item & (role == 'manager') for item, role in zip(mark_firewells(dialog_text), data['role'])]
+    introduces = [item & (role == 'manager') for item, role in zip(mark_introduces(dialog_text), data['role'])]
+    data['greeting'] = greetings
+    data['firewell'] = firewells
+    data['introduce'] = introduces
 
-    greetings = mark_greetings(manager_phases)
-    introduces = mark_introduces(manager_phases)
-    firewells = mark_firewells(manager_phases)
-    names = extract_names([manager_phases[idx] for idx, intro in enumerate(introduces) if intro])
+    last = len(data) - 1
+    greet = [False for _ in range(data['dlg_id'][last] + 1)]
+    byes = [False for _ in range(data['dlg_id'][last] + 1)]
+    for dlg_idx, greet_, role in zip(data['dlg_id'], greetings, data['role']):
+        if greet_ and role == 'manager':
+            greet[dlg_idx] = True
+    for dlg_idx, greet_, role in zip(data['dlg_id'], firewells, data['role']):
+        if greet_ and role == 'manager':
+            byes[dlg_idx] = True
+    hi_and_bye = [greet[data['dlg_id'][idx]] & byes[data['dlg_id'][idx]] \
+        for idx in range(len(data))]
+    data['hi_and_bye'] = hi_and_bye
 
-    print(('-' * 20) + 'Greetings' + ('-' * 20))
-    for text, label in zip(manager_phases, greetings):
-        if label:
-            print(text)
-    print(('-' * 20) + 'Introduces' + ('-' * 20))
-    for text, label in zip(manager_phases, introduces):
-        if label:
-            print(text)
-    print(('-' * 20) + 'Firewells' + ('-' * 20))
-    for text, label in zip(manager_phases, firewells):
-        if label:
-            print(text)
-    print(('-' * 20) + 'Names' + ('-' * 20))
-    for name in names:
-        print(name)
+    intros = [data['text'][idx] for idx, intro in enumerate(introduces) if intro]
+    indicies = [idx for idx, intro in enumerate(introduces) if intro]
+    names = extract_names(intros)
+    companies = extract_companies(intros)
+    names_column = [None for _ in range(len(data))]
+    companies_column = [None for _ in range(len(data))]
+    for idx, company, name in zip(indicies, companies, names):
+        companies_column[idx] = company
+        names_column[idx] = name
+    data['company_name'] = companies_column
+    data['manager_name'] = names_column
+
+    data.to_csv('updated_data.csv')
     
 if __name__ == '__main__':
     mark_csv_file()

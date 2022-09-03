@@ -40,6 +40,8 @@ vsego = [
 ]
 
 good = preprocess('Добрый')
+campaign = preprocess('компания')
+
 intro_words = normalize(intro_words)
 greets = normalize(greets)
 good_anything = normalize(good_anything)
