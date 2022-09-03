@@ -1,24 +1,5 @@
-from scripts.common import preprocess
+from scripts.common import preprocess, greets, good_anything, good
 
-
-greets = [
-    'Привет',
-    'Здравствуйте',
-    'Алло',
-    ]
-
-good = preprocess('Добрый')
-
-good_anything = [
-    'День',
-    'Вечер',
-    'Утро',
-]
-
-def normalize_greetings():
-    global greets, good_anything
-    greets = list(map(preprocess, greets))
-    good_anything = list(map(preprocess, good_anything))
 
 def detect_greeting(sentence: str) -> bool:
     words = list(map(preprocess, sentence.split()))
@@ -33,6 +14,5 @@ def detect_greeting(sentence: str) -> bool:
     return False
 
 def mark_greetings(monologue: list) -> list:
-    normalize_greetings()
     verdict = [detect_greeting(sent) for sent in monologue]
     return verdict

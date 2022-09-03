@@ -1,24 +1,5 @@
-from scripts.common import preprocess
+from scripts.common import preprocess, do, vsego
 
-
-do = [
-    'свидания',
-    'скорого',
-    'завтра',
-    'встречи',
-    'скорой',
-]
-
-vsego = [
-    'хорошего', 
-    'доброго',
-    'наилучшего',
-]
-
-def normalize_firewells():
-    global do, vsego
-    do = list(map(preprocess, do))
-    vsego = list(map(preprocess, vsego))
 
 def detect_firewell(sentence: str) -> bool:
     words = list(map(preprocess, sentence.split()))
@@ -36,6 +17,5 @@ def detect_firewell(sentence: str) -> bool:
     return False
 
 def mark_firewells(monologue: list) -> list:
-    normalize_firewells()
     verdict = [detect_firewell(sent) for sent in monologue]
     return verdict

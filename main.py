@@ -1,6 +1,7 @@
 from scripts.firewell import mark_firewells
 from scripts.greeting import mark_greetings
 from scripts.introduce import mark_introduces
+from scripts.naming import extract_names
 
 import pandas as pd
 import click
@@ -11,9 +12,12 @@ import click
 def mark_csv_file(fname):
     data = pd.read_csv(fname)
     manager_phases = [text for text, role in zip(data['text'], data['role']) if role == 'manager']
+
     greetings = mark_greetings(manager_phases)
     introduces = mark_introduces(manager_phases)
     firewells = mark_firewells(manager_phases)
+    names = extract_names([manager_phases[idx] for idx, intro in enumerate(introduces) if intro])
+
     print(('-' * 20) + 'Greetings' + ('-' * 20))
     for text, label in zip(manager_phases, greetings):
         if label:
@@ -26,6 +30,9 @@ def mark_csv_file(fname):
     for text, label in zip(manager_phases, firewells):
         if label:
             print(text)
+    print(('-' * 20) + 'Names' + ('-' * 20))
+    for name in names:
+        print(name)
     
 if __name__ == '__main__':
     mark_csv_file()
