@@ -1,4 +1,4 @@
-from .common import preprocess, analyzer
+from common import preprocess, analyzer
 
 
 intro_words = [

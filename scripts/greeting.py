@@ -1,4 +1,4 @@
-from .common import preprocess
+from common import preprocess
 
 
 greets = [
