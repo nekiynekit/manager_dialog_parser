@@ -1,2 +1,3 @@
 current_env/
 test_data.csv
+scripts/__pycache__/
