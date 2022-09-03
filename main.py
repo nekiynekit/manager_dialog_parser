@@ -9,9 +9,10 @@ import click
 
 
 @click.command()
-@click.option('--fname', default='test_data.csv', help='Name of CSV-file for parsing')
-def mark_csv_file(fname):
-    data = pd.read_csv(fname)
+@click.option('--fread', default='test_data.csv', help='Name of CSV-file for parsing')
+@click.option('--frite', default='updated_dat.csv', help='Result will be saved in file with this name')
+def mark_csv_file(fread, frite):
+    data = pd.read_csv(fread)
     dialog_text = data['text']
     
     greetings = [item & (role == 'manager') for item, role in zip(mark_greetings(dialog_text), data['role'])]
@@ -46,7 +47,7 @@ def mark_csv_file(fname):
     data['company_name'] = companies_column
     data['manager_name'] = names_column
 
-    data.to_csv('updated_data.csv')
+    data.to_csv(frite)
     
 if __name__ == '__main__':
     mark_csv_file()
