@@ -10,7 +10,7 @@ import click
 
 @click.command()
 @click.option('--fread', default='test_data.csv', help='Name of CSV-file for parsing')
-@click.option('--frite', default='updated_dat.csv', help='Result will be saved in file with this name')
+@click.option('--frite', default='updated_data.csv', help='Result will be saved in file with this name')
 def mark_csv_file(fread, frite):
     data = pd.read_csv(fread)
     dialog_text = data['text']
